@@ -1,4 +1,4 @@
-# Student-Attendance-System
+# Student-Attendance-System (By: Burlat, Rosario, Mateo)
 
 	attendance = {}
 
