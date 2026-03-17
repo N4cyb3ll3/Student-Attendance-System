@@ -1,0 +1,261 @@
+# Student_Attendance_System-By-Mateo-Rosario-Burlat-
+
+attendance = {}
+
+ABSENCE_LIMIT = 5  
+
+
+def check_absence_warning(name):
+    absences = attendance[name]["Absent"]
+
+    #Virtual Bar
+    bar = "█" * absences
+    print(f"Absences: {absences}/{ABSENCE_LIMIT} {bar}")
+
+    # Warning levels
+    if absences >= ABSENCE_LIMIT:
+        print("WARNING!! Absence limit EXCEEDED")
+    elif absences == ABSENCE_LIMIT - 1:
+        print("WARNING!! You are ABOUT TO reach the absence limit")
+
+
+# Reward system
+def reward_dashboard():
+    if len(attendance) == 0:
+        print("No students yet.\n")
+        return
+
+    print("===== Reward Dashboard =====")
+
+    print("\nMost Punctual Students:")
+
+    max_score = -999
+    punctual_students = []
+
+    for name in attendance:
+        present = attendance[name]["Present"]
+        late = attendance[name]["Late"]
+
+        score = present - late
+
+        if score > max_score:
+            max_score = score
+            punctual_students = [name]
+        elif score == max_score:
+            punctual_students.append(name)
+
+    if punctual_students:
+        for student in punctual_students:
+            print("-", student)
+    else:
+        print("No data available.")
+
+    print("\nPerfect Attendance Awardees:")
+
+    perfect_students = []
+
+    for name in attendance:
+        record = attendance[name]
+
+        if (
+            record["Absent"] == 0 and
+            record["Late"] == 0 and
+            record["Late Filing"] == 0 and
+            record["Cutting Classes"] == 0
+        ):
+            perfect_students.append(name)
+
+    if perfect_students:
+        for student in perfect_students:
+            print("-", student)
+    else:
+        print("No perfect attendance yet.")
+
+    print()
+
+
+def add_student():
+    name = input("Enter student name: ").title()
+
+    if name in attendance:
+        print("Student already exists.\n")
+    else:
+        attendance[name] = {
+            "Present": 0,
+            "Absent": 0,
+            "Late": 0,
+            "Late Filing": 0,
+            "Excused": 0,
+            "Special Order": 0,
+            "Cutting Classes": 0
+        }
+        print("Student added successfully.\n")
+
+
+def mark_attendance():
+    name = input("Enter student name: ").title()
+
+    if name not in attendance:
+        print("Student not found.\n")
+        return
+
+    print("P - Present")
+    print("A - Absent")
+    print("L - Late")
+    print("LF - Late Filing")
+    print("E - Excused")
+    print("SO - Special Order")
+    print("CC - Cutting Classes")
+
+    status = input("Enter status: ").upper()
+
+    if status == "P":
+        attendance[name]["Present"] += 1
+    elif status == "A":
+        attendance[name]["Absent"] += 1
+    elif status == "L":
+        attendance[name]["Late"] += 1
+    elif status == "LF":
+        attendance[name]["Late Filing"] += 1
+    elif status == "E":
+        attendance[name]["Excused"] += 1
+    elif status == "SO":
+        attendance[name]["Special Order"] += 1
+    elif status == "CC":
+        attendance[name]["Cutting Classes"] += 1
+    else:
+        print("Invalid input.\n")
+        return
+
+    print("Attendance recorded.\n")
+
+    check_absence_warning(name)
+    print()
+
+
+def view_record():
+    name = input("Enter student name: ").title()
+
+    if name not in attendance:
+        print("Student not found.\n")
+        return
+
+    print("Attendance Record for", name)
+    print("Present:", attendance[name]["Present"])
+    print("Absent:", attendance[name]["Absent"])
+    print("Late:", attendance[name]["Late"])
+    print("Late Filing:", attendance[name]["Late Filing"])
+    print("Excused:", attendance[name]["Excused"])
+    print("Special Order:", attendance[name]["Special Order"])
+    print("Cutting Classes:", attendance[name]["Cutting Classes"])
+
+    total_infractions = (
+        attendance[name]["Absent"] +
+        attendance[name]["Late"] +
+        attendance[name]["Late Filing"] +
+        attendance[name]["Cutting Classes"]
+    )
+
+    if total_infractions >= 3:
+        print("Status: Probation")
+    else:
+        print("Status: Good Standing")
+
+    check_absence_warning(name)
+
+    print()
+
+
+def view_all():
+    if len(attendance) == 0:
+        print("No students yet.\n")
+        return
+
+    for name in attendance:
+        print(name)
+        print("Present:", attendance[name]["Present"])
+        print("Absent:", attendance[name]["Absent"])
+        print("Late:", attendance[name]["Late"])
+        print("Late Filing:", attendance[name]["Late Filing"])
+        print("Excused:", attendance[name]["Excused"])
+        print("Special Order:", attendance[name]["Special Order"])
+        print("Cutting Classes:", attendance[name]["Cutting Classes"])
+
+        total_infractions = (
+            attendance[name]["Absent"] +
+            attendance[name]["Late"] +
+            attendance[name]["Late Filing"] +
+            attendance[name]["Cutting Classes"]
+        )
+
+        if total_infractions >= 3:
+            print("Status: Probation")
+        else:
+            print("Status: Good Standing")
+
+        check_absence_warning(name)
+
+        print()
+
+
+def count_students():
+    print("Total Students:", len(attendance))
+    print()
+
+
+def check_probation():
+    name = input("Enter student name: ").title()
+
+    if name not in attendance:
+        print("Student not found.\n")
+        return
+
+    total_infractions = (
+        attendance[name]["Absent"] +
+        attendance[name]["Late"] +
+        attendance[name]["Late Filing"] +
+        attendance[name]["Cutting Classes"]
+    )
+
+    if total_infractions >= 3:
+        print(name, "is on Probation.\n")
+    else:
+        print(name, "is in Good Standing.\n")
+
+
+def exit_program():
+    print("Exiting Attendance System. Goodbye!")
+    exit()
+
+
+while True:
+    print("===== Attendance System =====")
+    print("1 - Add Student")
+    print("2 - Mark Attendance")
+    print("3 - View Student Record")
+    print("4 - View All Students")
+    print("5 - Total Students")
+    print("6 - Check Probation")
+    print("7 - Exit")
+    print("8 - Reward Dashboard")
+
+    choice = input("Choose: ")
+
+    if choice == "1":
+        add_student()
+    elif choice == "2":
+        mark_attendance()
+    elif choice == "3":
+        view_record()
+    elif choice == "4":
+        view_all()
+    elif choice == "5":
+        count_students()
+    elif choice == "6":
+        check_probation()
+    elif choice == "7":
+        exit_program()
+    elif choice == "8": 
+        reward_dashboard()
+    else:
+        print("Invalid choice.\n")
